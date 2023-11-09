@@ -31,7 +31,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: AccountCogOutline,
       path: '/account-settings'
     },
-    {
+    /*{
       sectionTitle: 'Pages'
     },
     {
@@ -79,7 +79,7 @@ const navigation = (): VerticalNavItemsType => {
       icon: CubeOutline,
       title: 'Form Layouts',
       path: '/form-layouts'
-    }
+    }*/
   ]
 }
 

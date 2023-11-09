@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, Fragment } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -21,7 +22,7 @@ import CardHeader from '@mui/material/CardHeader'
 // ** Icons Imports
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
-import { Button } from '@mui/material'
+import { Button, CardContent } from '@mui/material'
 
 const createData = (name: string, calories: string, fat: string, carbs: number, protein: number, price: number) => {
   return {
@@ -116,46 +117,52 @@ const rows = [
 ]
 
 const Licitaciones = () => {
+
+  const router = useRouter()
+
   return ( 
 
     <Grid container spacing={6}>
       <Grid item xs={12} md={12}>
         <Card>
           <CardHeader title='Mis licitaciones' titleTypographyProps={{ variant: 'h1' }} />
+          <CardContent>
+            <Box 
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end'
+              }}
+            >
 
-          <Box 
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end'
-            }}
-          >
+              <Button size='large' type='button' variant='contained' 
+                onClick={() => {
+                  router.push('/licitaciones/save')
+                }} 
+              >
+                Crear Licitación
+              </Button>
 
-            <Button size='large' type='button' variant='contained' onClick={() => {}} >
-              Crear Licitación
-            </Button>
-
-          </Box>
-
-          <TableContainer component={Paper}>
-            <Table aria-label='collapsible table'>
-              <TableHead>
-                <TableRow>
-                  <TableCell />
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>Inicio</TableCell>
-                  <TableCell>Culminación</TableCell>
-                  <TableCell align='right'>Presupuesto</TableCell>
-                  <TableCell>Protein (g)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map(row => (
-                  <Row key={row.name} row={row} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          
+            </Box>
+            <TableContainer component={Paper}>
+              <Table aria-label='collapsible table'>
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>Nombre</TableCell>
+                    <TableCell>Inicio</TableCell>
+                    <TableCell>Culminación</TableCell>
+                    <TableCell align='right'>Presupuesto</TableCell>
+                    <TableCell>Protein (g)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map(row => (
+                    <Row key={row.name} row={row} />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
         </Card>
       </Grid>
     </Grid>

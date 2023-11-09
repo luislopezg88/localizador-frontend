@@ -6,19 +6,15 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Grid, { GridProps } from '@mui/material/Grid'
 
-import Link from '@mui/material/Link'
+
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
 import FormControl from '@mui/material/FormControl'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import InputAdornment from '@mui/material/InputAdornment'
-import FormHelperText from '@mui/material/FormHelperText'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
-import Chip from '@mui/material/Chip';
+import Chip from '@mui/material/Chip'
 import { Box } from '@mui/material'
 
 
@@ -46,6 +42,8 @@ const Home = () => {
       [name]: value
     })
   }
+
+  const [oportunidades, setOportunidades] = useState([])
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     const {name, value} = e.target;
@@ -79,6 +77,14 @@ const Home = () => {
       ...empresa,
       tags: currentTags
     })
+  }
+
+  const saveData = () => {
+
+  }
+
+  const searchOpornunities = () => {
+
   }
 
   return (
@@ -221,7 +227,7 @@ const Home = () => {
                           }}
                         >
                           <Button size='large' type='button' variant='contained' onClick={() => addTag()} >
-                            Crear Tag
+                            Añadir Tag
                           </Button>
                         </Box>
                       </Grid>                
@@ -242,17 +248,51 @@ const Home = () => {
                   </Box>                                
                 </Box>
               </Grid> 
-           </Grid> 
+            </Grid> 
+            
+            <Grid container spacing={6}>
+              <Grid item xs={12} sm={12}>
+                <Box
+                  style={{
+                    marginTop: 20
+                  }}
+                >
+                  <Button size='large' type='button' variant='contained' onClick={() => saveData()} >
+                    Guardar
+                  </Button>
+                </Box> 
+              </Grid>
+            </Grid>
             
           </CardContent>
         </Card>
-        
-      </Grid>
-      <Grid item xs={12} md={12}>
-        <p>Algo mas</p>
+
+        <Card
+          sx={{
+            mt: 10
+          }}
+        >
+          <CardHeader title='Oportunudades de negocio' titleTypographyProps={{ variant: 'h1' }} />
+            <CardContent>
+
+              <Grid container spacing={6}>
+                <Grid item xs={12} md={6}>
+                  <Box
+                    style={{
+                      marginTop: 20
+                    }}
+                  >
+                    <Button size='large' type='button' variant='contained' onClick={() => searchOpornunities()} >
+                      Buscar Oportunides
+                    </Button>
+                  </Box> 
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+
       </Grid>
     </Grid>
-   
   )
 }
 

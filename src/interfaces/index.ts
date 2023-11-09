@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs'
+
 export interface IEmpresa {
     id?: string;
     nombre?: string;
@@ -7,5 +9,15 @@ export interface IEmpresa {
     empleados?: string;
     intereses?: string;
     tags: Array<string>;
+    id_user?: string;
+}
+
+export interface ILicitacion {
+    id?: string;
+    nombre?: string;
+    descripcion?: string;
+    inicio?: Dayjs | null;
+    fin?: Dayjs | null;
+    presupuesto: string;
     id_user?: string;
 }
