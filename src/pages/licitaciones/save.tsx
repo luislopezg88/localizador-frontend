@@ -5,6 +5,7 @@ import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Grid, { GridProps } from '@mui/material/Grid'
+import { useRouter } from 'next/router'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -14,12 +15,17 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Dayjs } from 'dayjs'
 import { ILicitacion } from 'src/interfaces'
+import { API_URL } from 'src/configs/constans'
+import { AuthResponse, AuthResponseError } from 'src/configs/types'
 
 
 
 const Save = () => {
 
+  const router = useRouter()
+
   const [licitacion, setLicitacion] = useState<ILicitacion>({
+    id: '',
     nombre: '',
     descripcion: '',
     inicio: null,
@@ -27,6 +33,7 @@ const Save = () => {
     presupuesto: '',
     id_user: ''
   })
+  const [errorResponse, setErrorResponse] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
@@ -36,8 +43,33 @@ const Save = () => {
     })
   }
 
-  const saveData = () => {
-
+  const saveData = async () => {
+    console.log(API_URL);
+    if(licitacion.nombre == '' || licitacion.descripcion == ''){
+      alert('debe llenar todos los campos')
+      return 
+    } else {
+      try {
+        const bodySend = {
+          ...licitacion
+        }
+        const response = await fetch(`${API_URL}/licitaciones`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodySend),
+        });
+        if (response.ok) {
+          const json = (await response.json()) as AuthResponse;
+          console.log(json);
+          router.push('/licitaciones')
+        } else {
+          const json = (await response.json()) as AuthResponseError;
+          setErrorResponse(json.body.error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 
   return ( 
@@ -52,7 +84,7 @@ const Save = () => {
                     fullWidth
                     type='text'
                     label='Nombre'
-                    placeholder='nombre de la licitaión'
+                    placeholder='Nombre de la licitaión'
                     value={licitacion.nombre}
                     name='nombre'
                     onChange={handleChange}
@@ -108,7 +140,7 @@ const Save = () => {
                     type='Presupuesto'
                     label='presupuesto'
                     value={licitacion.presupuesto}
-                    name='nombre'
+                    name='presupuesto'
                     onChange={handleChange}
                   />
                 </Grid>

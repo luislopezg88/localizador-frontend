@@ -40,7 +40,7 @@ const Home = () => {
   })
   const [tag, setTag] = useState<string>('')
   const [oportunidades, setOportunidades] = useState([])
-  const [errorResponse, setErrorResponse] = useState("");
+  const [errorResponse, setErrorResponse] = useState("")
 
   useEffect(() => {
     getCompanyData();

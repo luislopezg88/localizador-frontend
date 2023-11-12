@@ -14,10 +14,10 @@ export interface IEmpresa {
 
 export interface ILicitacion {
     id?: string;
-    nombre?: string;
+    nombre: string;
     descripcion?: string;
-    inicio?: Dayjs | null;
-    fin?: Dayjs | null;
+    inicio: Dayjs | null;
+    fin: Dayjs | null;
     presupuesto: string;
     id_user?: string;
 }

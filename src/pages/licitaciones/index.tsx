@@ -1,6 +1,7 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, Fragment, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useAuth } from '../../context/AuthProvider'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -18,18 +19,22 @@ import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
+import { Dayjs } from 'dayjs'
 
 // ** Icons Imports
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 import { Button, CardContent } from '@mui/material'
+import { API_URL } from 'src/configs/constans'
+import { AuthResponseError } from 'src/configs/types'
+import { ILicitacion } from 'src/interfaces'
 
-const createData = (name: string, calories: string, fat: string, carbs: number, protein: number, price: number) => {
+const createData = (nombre: string, inicio: Dayjs, fin: Dayjs, presupuesto: string, protein: number, price: number) => {
   return {
-    name,
-    calories,
-    fat,
-    carbs,
+    nombre,
+    inicio,
+    fin,
+    presupuesto,
     protein,
     price,
     history: [
@@ -64,11 +69,11 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
           </IconButton>
         </TableCell>
         <TableCell component='th' scope='row'>
-          {row.name}
+          {row.nombre}
         </TableCell>
-        <TableCell>{row.calories}</TableCell>
-        <TableCell>{row.fat}</TableCell>
-        <TableCell align='right'>{row.carbs}</TableCell>
+        <TableCell>{row.inicio}</TableCell>
+        <TableCell>{row.fin}</TableCell>
+        <TableCell align='right'>{row.presupuesto}</TableCell>
         <TableCell>{row.protein}</TableCell>
       </TableRow>
       <TableRow>
@@ -76,7 +81,7 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
           <Collapse in={open} timeout='auto' unmountOnExit>
             <Box sx={{ m: 2 }}>
               <Typography variant='h6' gutterBottom component='div'>
-                History
+                Convocatorias
               </Typography>
               <Table size='small' aria-label='purchases'>
                 <TableHead>
@@ -108,17 +113,57 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
   )
 }
 
-const rows = [
-  createData('Licitacion1', '2023-08-11', '2023-08-11', 24, 4.0, 3.99),
-  createData('Licitacion12', '2023-08-11', '2023-08-11', 37, 4.3, 4.99),
-  createData('Licitacion3', '2023-08-11', '2023-08-11', 24, 6.0, 3.79),
-  createData('Licitacion4', '2023-08-11', '2023-08-11', 67, 4.3, 2.5),
-  createData('Licitacion5', '2023-08-11', '2023-08-11', 49, 3.9, 1.5)
-]
+/*const rows = [
+  createData('Licitacion1', '2023-08-11', '2023-08-11', '24', 4.0, 3.99),
+  createData('Licitacion12', '2023-08-11', '2023-08-11', '37', 4.3, 4.99),
+  createData('Licitacion3', '2023-08-11', '2023-08-11', '24', 6.0, 3.79),
+  createData('Licitacion4', '2023-08-11', '2023-08-11', '67', 4.3, 2.5),
+  createData('Licitacion5', '2023-08-11', '2023-08-11', '49', 3.9, 1.5)
+]*/
+
+
 
 const Licitaciones = () => {
 
   const router = useRouter()
+  const auth = useAuth()
+
+  const [errorResponse, setErrorResponse] = useState("")
+  const [licitaciones, setLicitaciones] = useState([]);
+
+  useEffect(() => {
+    getLicitacionData()
+  }, [])
+
+  const getLicitacionData = async () =>{
+    try {
+      const response = await fetch(`${API_URL}/licitaciones?user=${auth.getUser()?.id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const json = (await response.json()) as any;
+        console.log(json);
+        if(json && json.length > 0){
+          const dataResponse = json;
+          let formatData: any = [];
+          dataResponse.forEach((d: any) => {
+            formatData.push(
+              createData(d.nombre, d.inicio, d.fin, d.presupuesto, 3.9, 1.5)
+            )
+          });
+          setLicitaciones(formatData);
+
+        }
+      } else {
+        const json = (await response.json()) as AuthResponseError;
+        setErrorResponse(json.body.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  } 
+
 
   return ( 
 
@@ -156,8 +201,8 @@ const Licitaciones = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map(row => (
-                    <Row key={row.name} row={row} />
+                  {licitaciones.map((row: any) => (
+                    <Row key={row.nombre} row={row} />
                   ))}
                 </TableBody>
               </Table>
