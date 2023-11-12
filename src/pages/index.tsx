@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useAuth } from '../context/AuthProvider'
 import Card from '@mui/material/Card'
 import { styled } from '@mui/material/styles'
 import CardHeader from '@mui/material/CardHeader'
@@ -17,23 +18,33 @@ import Divider from '@mui/material/Divider'
 import Chip from '@mui/material/Chip'
 import { Box } from '@mui/material'
 
-
 import { finalidades } from 'src/moks/finalidades'
 import { IEmpresa } from 'src/interfaces'
+import { instrumentos } from 'src/moks/instrumentos'
+import { API_URL } from 'src/configs/constans'
+import { AuthResponse, AuthResponseError } from 'src/configs/types'
 
 const Home = () => {
 
+  const auth = useAuth();
   const [empresa, setempresa] = useState<IEmpresa>({
+    id: '',
     nombre: '',
     descripcion: '',
     finalidad: '',
-    sector: '',
+    tipo: '',
     empleados: '',
-    intereses: '',
-    tags: ['primera','segunda'],
+    instrumento: '',
+    tags: [],
     id_user: ''
   })
   const [tag, setTag] = useState<string>('')
+  const [oportunidades, setOportunidades] = useState([])
+  const [errorResponse, setErrorResponse] = useState("");
+
+  useEffect(() => {
+    getCompanyData();
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
@@ -43,7 +54,6 @@ const Home = () => {
     })
   }
 
-  const [oportunidades, setOportunidades] = useState([])
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     const {name, value} = e.target;
@@ -79,9 +89,90 @@ const Home = () => {
     })
   }
 
-  const saveData = () => {
-
+  async function handleSubmit() {
+    //e.preventDefault();
+    // auth.setIsAuthenticated(true);
+    console.log(API_URL);
+    if(empresa.nombre == '' || empresa.descripcion == ''){
+      alert('debe llenar todos los campos')
+      return 
+    } else {
+      try {
+        if(empresa.id != '' && empresa.id != null) { //update empresa
+          const bodySend = {
+            ...empresa,
+            empleados: parseInt(empresa?.empleados, 10),
+            tags: JSON.stringify(empresa.tags),
+          }
+          const response = await fetch(`${API_URL}/empresas/save/${empresa.id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bodySend)
+          });
+          if (response.ok) {
+            const json = (await response.json()) as AuthResponse;
+            console.log(json);
+          } else {
+            const json = (await response.json()) as AuthResponseError;
+            setErrorResponse(json.body.error);
+          }
+        } else { //create empresa
+          const bodySend = {
+            ...empresa,
+            empleados: parseInt(empresa?.empleados, 10),
+            tags: JSON.stringify(empresa.tags),
+            id_user: auth.getUser()?.id
+          }
+          const response = await fetch(`${API_URL}/empresas`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bodySend)
+          });
+          if (response.ok) {
+            const json = (await response.json()) as AuthResponse;
+            console.log(json);
+          } else {
+            const json = (await response.json()) as AuthResponseError;
+            setErrorResponse(json.body.error);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
+
+  const getCompanyData = async () =>{
+    try {
+      const response = await fetch(`${API_URL}/empresas?user=${auth.getUser()?.id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const json = (await response.json()) as any;
+        console.log(json);
+        if(json && json.length > 0){
+          const dataResponse = json[0];
+          setempresa({
+            id: dataResponse._id,
+            nombre: dataResponse.nombre,
+            tipo: dataResponse.tipo,
+            descripcion: dataResponse.descripcion,
+            tags: JSON.parse(dataResponse.tags),
+            empleados: dataResponse.empleados,
+            finalidad: dataResponse.finalidad,
+            id_user: dataResponse.id_user,
+            instrumento: dataResponse. instrumento
+          })
+        }
+      } else {
+        const json = (await response.json()) as AuthResponseError;
+        setErrorResponse(json.body.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }  
 
   const searchOpornunities = () => {
 
@@ -109,14 +200,14 @@ const Home = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Sector de empresa</InputLabel>
+                  <InputLabel id='form-layouts-separator-select-label'>Tipo de empresa</InputLabel>
                   <Select
-                    label='Sector de empresa'
+                    label='Tipo de empresa'
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'
-                    value={empresa.sector}
-                    name='sector'
+                    value={empresa.tipo}
+                    name='tipo'
                     onChange={handleChangeSelect}
                   >
                     <MenuItem value='microempresa'>Microempresas</MenuItem>
@@ -151,8 +242,8 @@ const Home = () => {
                     name='finalidad'
                     onChange={handleChangeSelect}
                   >
-                    {finalidades.map(f => (
-                      <MenuItem value={f.keyword} key={f.keyword} >{f.descripcion}</MenuItem>
+                    {finalidades.map((f: any, index: number) => (
+                      <MenuItem value={f.keyword} key={f.keyword + '-'+ index}>{f.descripcion}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -169,19 +260,19 @@ const Home = () => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <InputLabel id='form-layouts-separator-select-label'>Intereses</InputLabel>
+                  <InputLabel id='form-layouts-separator-select-label'>Instrumento</InputLabel>
                   <Select
-                    label='Intereses'
+                    label='Instrumento'
                     defaultValue=''
                     id='form-layouts-separator-select'
                     labelId='form-layouts-separator-select-label'
-                    value={empresa.sector}
-                    name='sector'
+                    value={empresa.instrumento}
+                    name='instrumento'
                     onChange={handleChangeSelect}
                   >
-                    <MenuItem value='microempresa'>Microempresas</MenuItem>
-                    <MenuItem value='pyme'>Pequeñas y medianas empresas (PYME)</MenuItem>
-                    <MenuItem value='grande'>Grandes empresas</MenuItem>
+                    {instrumentos.map((i: any, index: number) =>(
+                      <MenuItem value={i.keyword} key={i.keyword}>{i.descripcion}</MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
@@ -240,7 +331,7 @@ const Home = () => {
                           }}
                         >
                           {empresa.tags.map((t: string, index: number) => (
-                            <Chip label={t} variant="outlined" sx={{ mr: 5 }} onDelete={() => handleDelete(index)} />
+                            <Chip label={t} variant="outlined" sx={{ mr: 5 }} onDelete={() => handleDelete(index)}  key={t+ '-'+ index}/>
                           ))}
                         </Box>
                       </Grid>
@@ -257,7 +348,7 @@ const Home = () => {
                     marginTop: 20
                   }}
                 >
-                  <Button size='large' type='button' variant='contained' onClick={() => saveData()} >
+                  <Button size='large' type='button' variant='contained' onClick={() => handleSubmit()} >
                     Guardar
                   </Button>
                 </Box> 

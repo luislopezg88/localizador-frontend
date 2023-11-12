@@ -5,9 +5,9 @@ export interface IEmpresa {
     nombre?: string;
     descripcion?: string;
     finalidad?: string;
-    sector?: string;
-    empleados?: string;
-    intereses?: string;
+    tipo?: string;
+    empleados: string;
+    instrumento?: string;
     tags: Array<string>;
     id_user?: string;
 }

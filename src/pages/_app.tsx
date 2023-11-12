@@ -1,6 +1,6 @@
 // ** Next Imports
 import Head from 'next/head'
-import { Router } from 'next/router'
+import { Router, useRouter } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 
@@ -29,6 +29,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import { AuthProvider } from 'src/context/AuthProvider'
+import ProtectedRoute from 'src/navigation/ProtectedRoute'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -57,6 +59,9 @@ const App = (props: ExtendedAppProps) => {
 
   // Variables
   const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+  const noAuthRequired = ['/login','/register'];
+
+  const router = useRouter();
 
   return (
     <CacheProvider value={emotionCache}>
@@ -69,11 +74,21 @@ const App = (props: ExtendedAppProps) => {
         <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
-
       <SettingsProvider>
         <SettingsConsumer>
           {({ settings }) => {
-            return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+            return (
+              <AuthProvider>
+                {noAuthRequired.includes(router.pathname) ? (
+                  <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+                ) : (
+                  <ProtectedRoute>
+                    <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+                  </ProtectedRoute>
+                )}
+              </AuthProvider>
+            )
+            //return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
           }}
         </SettingsConsumer>
       </SettingsProvider>
