@@ -174,8 +174,22 @@ const Home = () => {
     }
   }  
 
-  const searchOpornunities = () => {
-
+  const searchOpornunities = async () =>{
+    try {
+      const response = await fetch(`${API_URL}/empresas/consultarLicitaciones/${auth.getUser()?.id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const json = (await response.json()) as any;
+        console.log(json);
+      } else {
+        const json = (await response.json()) as AuthResponseError;
+        setErrorResponse(json.body.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
