@@ -29,8 +29,9 @@ import { API_URL } from 'src/configs/constans'
 import { AuthResponseError } from 'src/configs/types'
 import { ILicitacion } from 'src/interfaces'
 
-const createData = (nombre: string, inicio: Dayjs, fin: Dayjs, presupuesto: string, protein: number, price: number) => {
+const createData = (_id: string, nombre: string, inicio: Dayjs, fin: Dayjs, presupuesto: string, protein: number, price: number) => {
   return {
+    _id,
     nombre,
     inicio,
     fin,
@@ -60,11 +61,38 @@ const Row = (props: { row: ReturnType<typeof createData> }) => {
   // ** State
   const [open, setOpen] = useState<boolean>(false)
 
+
+  const expandCollapse = () => {
+    getLicitacion()
+    setOpen(!open)
+  }
+
+  const getLicitacion = async () => {
+    try {
+      const response = await fetch(`${API_URL}/licitaciones/${row._id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const json = (await response.json()) as any;
+        console.log(json);
+        if(json && json.length > 0){
+          
+        }
+      } else {
+        const json = (await response.json()) as AuthResponseError;
+        //setErrorResponse(json.body.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
-          <IconButton aria-label='expand row' size='small' onClick={() => setOpen(!open)}>
+          <IconButton aria-label='expand row' size='small' onClick={() => expandCollapse()}>
             {open ? <ChevronUp /> : <ChevronDown />}
           </IconButton>
         </TableCell>
@@ -146,10 +174,10 @@ const Licitaciones = () => {
         console.log(json);
         if(json && json.length > 0){
           const dataResponse = json;
-          let formatData: any = [];
+          const formatData: any = [];
           dataResponse.forEach((d: any) => {
             formatData.push(
-              createData(d.nombre, d.inicio, d.fin, d.presupuesto, 3.9, 1.5)
+              createData(d._id, d.nombre, d.inicio, d.fin, d.presupuesto, 3.9, 1.5)
             )
           });
           setLicitaciones(formatData);
