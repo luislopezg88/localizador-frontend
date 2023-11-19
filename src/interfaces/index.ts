@@ -4,10 +4,12 @@ export interface IEmpresa {
     id?: string;
     nombre?: string;
     descripcion?: string;
-    finalidad?: string;
     tipo?: string;
     empleados: string;
+    finalidad?: string;
     instrumento?: string;
+    administracion?: string;
+    organo?: string;
     tags: Array<string>;
     id_user?: string;
 }

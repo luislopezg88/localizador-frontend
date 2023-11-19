@@ -18,9 +18,11 @@ import Divider from '@mui/material/Divider'
 import Chip from '@mui/material/Chip'
 import { Box } from '@mui/material'
 
-import { finalidades } from 'src/moks/finalidades'
 import { IEmpresa } from 'src/interfaces'
+import { finalidades } from 'src/moks/finalidades'
 import { instrumentos } from 'src/moks/instrumentos'
+import { administraciones } from 'src/moks/administraciones'
+import { organos } from 'src/moks/organos'
 import { API_URL } from 'src/configs/constans'
 import { AuthResponse, AuthResponseError } from 'src/configs/types'
 
@@ -160,9 +162,11 @@ const Home = () => {
             descripcion: dataResponse.descripcion,
             tags: JSON.parse(dataResponse.tags),
             empleados: dataResponse.empleados,
-            finalidad: dataResponse.finalidad,
             id_user: dataResponse.id_user,
-            instrumento: dataResponse. instrumento
+            finalidad: dataResponse.finalidad,
+            instrumento: dataResponse. instrumento,
+            administracion: dataResponse. administracion,
+            organo: dataResponse. organo
           })
         }
       } else {
@@ -244,6 +248,17 @@ const Home = () => {
                 />
               </Grid>
 
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  type='number'
+                  label='N° de empleados'
+                  value={empresa.empleados}
+                  name='empleados'
+                  onChange={handleChange}
+                />
+              </Grid>
+
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel id='form-layouts-separator-select-label'>Finalidad</InputLabel>
@@ -262,16 +277,7 @@ const Home = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  type='number'
-                  label='N° de empleados'
-                  value={empresa.empleados}
-                  name='empleados'
-                  onChange={handleChange}
-                />
-              </Grid>
+
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <InputLabel id='form-layouts-separator-select-label'>Instrumento</InputLabel>
@@ -291,6 +297,44 @@ const Home = () => {
                 </FormControl>
               </Grid>
             </Grid>
+
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id='form-layouts-separator-select-label'>Administración</InputLabel>
+                  <Select
+                    label='Administración'
+                    defaultValue=''
+                    id='form-layouts-separator-select'
+                    labelId='form-layouts-separator-select-label'
+                    value={empresa.administracion}
+                    name='administracion'
+                    onChange={handleChangeSelect}
+                  >
+                    {administraciones.map((f: any, index: number) => (
+                      <MenuItem value={f.keyword} key={f.keyword + '-'+ index}>{f.descripcion}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel id='form-layouts-separator-select-label'>Órgano</InputLabel>
+                  <Select
+                    label='Órgano'
+                    defaultValue=''
+                    id='form-layouts-separator-select'
+                    labelId='form-layouts-separator-select-label'
+                    value={empresa.organo}
+                    name='organo'
+                    onChange={handleChangeSelect}
+                  >
+                    {organos.map((f: any, index: number) => (
+                      <MenuItem value={f.keyword} key={f.keyword + '-'+ index}>{f.descripcion}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
             <Divider sx={{ mt: 5, mb: 5 }} />
 
