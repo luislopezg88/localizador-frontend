@@ -16,7 +16,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 import Chip from '@mui/material/Chip'
-import { Box } from '@mui/material'
+import { Alert, Box } from '@mui/material'
 
 import { IEmpresa } from 'src/interfaces'
 import { finalidades } from 'src/moks/finalidades'
@@ -24,7 +24,14 @@ import { instrumentos } from 'src/moks/instrumentos'
 import { administraciones } from 'src/moks/administraciones'
 import { organos } from 'src/moks/organos'
 import { API_URL } from 'src/configs/constans'
-import { AuthResponse, AuthResponseError } from 'src/configs/types'
+import { AuthResponse, AuthResponseError, IResponseError } from 'src/configs/types'
+import { AlertColor } from '@mui/material'
+
+interface IMessage  {
+  show: boolean;
+  text: string;
+  type: AlertColor
+}
 
 const Home = () => {
 
@@ -43,6 +50,11 @@ const Home = () => {
   const [tag, setTag] = useState<string>('')
   const [oportunidades, setOportunidades] = useState([])
   const [errorResponse, setErrorResponse] = useState("")
+  const [message, setMessage] = useState<IMessage>({
+    show: false,
+    text: '',
+    type: 'success'
+  })
 
   useEffect(() => {
     getCompanyData();
@@ -50,6 +62,10 @@ const Home = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
+    setMessage({
+      ...message,
+      show: false
+    })
     setempresa({
       ...empresa,
       [name]: value
@@ -59,6 +75,10 @@ const Home = () => {
 
   const handleChangeSelect = (e: SelectChangeEvent) => {
     const {name, value} = e.target;
+    setMessage({
+      ...message,
+      show: false
+    })
     setempresa({
       ...empresa,
       [name]: value
@@ -94,9 +114,12 @@ const Home = () => {
   async function handleSubmit() {
     //e.preventDefault();
     // auth.setIsAuthenticated(true);
-    console.log(API_URL);
     if(empresa.nombre == '' || empresa.descripcion == ''){
-      alert('debe llenar todos los campos')
+      setMessage({
+        show: true,
+        text: 'debe llenar todos los campo',
+        type: 'error'
+      })
       return 
     } else {
       try {
@@ -114,9 +137,16 @@ const Home = () => {
           if (response.ok) {
             const json = (await response.json()) as AuthResponse;
             console.log(json);
+            setTimeout(() => {
+              setMessage({
+                show: true,
+                text: 'Datos actualizados correctamente',
+                type: 'success'
+              })
+            }, 2000);
           } else {
-            const json = (await response.json()) as AuthResponseError;
-            setErrorResponse(json.body.error);
+            const json = (await response.json()) as IResponseError;
+            setErrorResponse(json.error);
           }
         } else { //create empresa
           const bodySend = {
@@ -133,13 +163,32 @@ const Home = () => {
           if (response.ok) {
             const json = (await response.json()) as AuthResponse;
             console.log(json);
+            setTimeout(() => {
+              setMessage({
+                show: true,
+                text: 'Datos actualizados correctamente',
+                type: 'success'
+              })
+            }, 2000);
           } else {
-            const json = (await response.json()) as AuthResponseError;
-            setErrorResponse(json.body.error);
+            const json = (await response.json()) as IResponseError;
+            setTimeout(() => {
+              setMessage({
+                show: true,
+                text: json.error,
+                type: 'error'
+              })
+            }, 2000);
+            setErrorResponse(json.error);
           }
         }
       } catch (error) {
         console.log(error);
+        setMessage({
+          show: true,
+          text: 'Error al Intentar guardar los datos',
+          type: 'error'
+        })
       }
     }
   }
@@ -296,9 +345,9 @@ const Home = () => {
                   </Select>
                 </FormControl>
               </Grid>
-            </Grid>
+           
 
-            <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel id='form-layouts-separator-select-label'>Administración</InputLabel>
                   <Select
@@ -335,6 +384,8 @@ const Home = () => {
                   </Select>
                 </FormControl>
               </Grid>
+
+            </Grid>
 
             <Divider sx={{ mt: 5, mb: 5 }} />
 
@@ -413,6 +464,24 @@ const Home = () => {
               </Grid>
             </Grid>
             
+            {message.show &&
+            <Grid container spacing={6}>
+              <Grid item xs={12} sm={12} sx={{ mt: 6 }} >
+                <Alert
+                  variant="filled" severity={message.type} 
+                  onClose={() => {
+                    setMessage({
+                      ...message,
+                      show: false
+                    })
+                  }}
+                >
+                  { message.text }
+                </Alert>
+              </Grid> 
+            </Grid>
+            }
+            
           </CardContent>
         </Card>
 
@@ -438,7 +507,7 @@ const Home = () => {
                 </Grid>
               </Grid>
             </CardContent>
-          </Card>
+        </Card>
 
       </Grid>
     </Grid>
