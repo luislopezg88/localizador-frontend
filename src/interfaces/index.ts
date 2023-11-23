@@ -1,4 +1,5 @@
 import { Dayjs } from 'dayjs'
+import { AlertColor } from '@mui/material'
 
 export interface IEmpresa {
     id?: string;
@@ -15,11 +16,17 @@ export interface IEmpresa {
 }
 
 export interface ILicitacion {
-    id?: string;
+    _id?: string;
     nombre: string;
     descripcion?: string;
     inicio: Dayjs | null;
     fin: Dayjs | null;
     presupuesto: string;
     id_user?: string;
+}
+
+export interface IMessage  {
+    show: boolean;
+    text: string;
+    type: AlertColor
 }

@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import { Box } from '@mui/material'
+import { Box, Alert } from '@mui/material'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -17,15 +17,14 @@ import { Dayjs } from 'dayjs'
 import { ILicitacion } from 'src/interfaces'
 import { API_URL } from 'src/configs/constans'
 import { AuthResponse, AuthResponseError } from 'src/configs/types'
-
-
+import { IMessage } from 'src/interfaces'
 
 const Save = () => {
 
   const router = useRouter()
 
   const [licitacion, setLicitacion] = useState<ILicitacion>({
-    id: '',
+    _id: '',
     nombre: '',
     descripcion: '',
     inicio: null,
@@ -34,6 +33,11 @@ const Save = () => {
     id_user: ''
   })
   const [errorResponse, setErrorResponse] = useState("");
+  const [message, setMessage] = useState<IMessage>({
+    show: false,
+    text: '',
+    type: 'success'
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value} = e.target;
@@ -152,6 +156,24 @@ const Save = () => {
                   </Box> 
                 </Grid>
               </Grid>
+
+              {message.show &&
+              <Grid container spacing={6}>
+                <Grid item xs={12} sm={12} sx={{ mt: 6 }} >
+                  <Alert
+                    variant="filled" severity={message.type} 
+                    onClose={() => {
+                      setMessage({
+                        ...message,
+                        show: false
+                      })
+                    }}
+                  >
+                    { message.text }
+                  </Alert>
+                </Grid> 
+              </Grid>
+              }
           </CardContent>
         </Card>
       </Grid>

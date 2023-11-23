@@ -16,7 +16,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Divider from '@mui/material/Divider'
 import Chip from '@mui/material/Chip'
-import { Alert, Box } from '@mui/material'
+import { Alert, Box, CircularProgress, Dialog, DialogTitle } from '@mui/material'
 
 import { IEmpresa } from 'src/interfaces'
 import { finalidades } from 'src/moks/finalidades'
@@ -55,6 +55,7 @@ const Home = () => {
     text: '',
     type: 'success'
   })
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     getCompanyData();
@@ -214,8 +215,8 @@ const Home = () => {
             id_user: dataResponse.id_user,
             finalidad: dataResponse.finalidad,
             instrumento: dataResponse. instrumento,
-            administracion: dataResponse. administracion,
-            organo: dataResponse. organo
+            administracion: dataResponse.administracion,
+            organo: dataResponse.organo
           })
         }
       } else {
@@ -228,6 +229,7 @@ const Home = () => {
   }  
 
   const searchOpornunities = async () =>{
+    setLoading(true);
     try {
       const response = await fetch(`${API_URL}/empresas/consultarLicitaciones/${auth.getUser()?.id}`, {
         method: "GET",
@@ -236,12 +238,21 @@ const Home = () => {
       if (response.ok) {
         const json = (await response.json()) as any;
         console.log(json);
+        if(json.sucess){
+          alert('ok')
+        } else {
+          setErrorResponse("No se encontraron convocatorias")
+        }
+        setLoading(false);
       } else {
-        const json = (await response.json()) as AuthResponseError;
-        setErrorResponse(json.body.error);
+        const json = (await response.json()) as any;
+        setLoading(false);
+        setErrorResponse("No se encontraron convocatorias")
       }
     } catch (error) {
+      setErrorResponse("Ocurrio un error intente nuevamente")
       console.log(error);
+      setLoading(false);
     }
   }
 
@@ -497,17 +508,42 @@ const Home = () => {
                 <Grid item xs={12} md={6}>
                   <Box
                     style={{
-                      marginTop: 20
+                      marginTop: 20,
+                      display: 'flex'
                     }}
                   >
                     <Button size='large' type='button' variant='contained' onClick={() => searchOpornunities()} >
                       Buscar Oportunides
                     </Button>
+
                   </Box> 
                 </Grid>
               </Grid>
+
+              {errorResponse != '' &&
+                <Grid container spacing={6}>
+                  <Grid item xs={12} sm={12} sx={{ mt: 6 }} >
+                    <Alert
+                      variant="filled" severity={'error'} 
+                      onClose={() => {
+                        setErrorResponse('')
+                      }}
+                    >
+                      { errorResponse }
+                    </Alert>
+                  </Grid> 
+                </Grid>
+              }
+              
             </CardContent>
         </Card>
+
+        <Dialog onClose={() => { setLoading(false) }} open={loading}>
+          <DialogTitle>Buscando...</DialogTitle>
+          <Box sx={{ marginBottom: 10, display: 'flex', justifyContent: 'center', alignItems: 'center', width: 200 }}>
+            <CircularProgress />
+          </Box>
+        </Dialog>
 
       </Grid>
     </Grid>
