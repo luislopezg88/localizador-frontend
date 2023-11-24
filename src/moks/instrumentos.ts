@@ -16,8 +16,8 @@ export const instrumentos =  [
     "keyword": "PRÉSTAMOS"
     },
     {
-    "descripcion": "SUBVENCIÓN y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN ",
-    "keyword": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+    "descripcion": "SUBVENCIÓN y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN",
+    "keyword": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN"
     },
     {
     "descripcion": "VENTAJA FISCAL",

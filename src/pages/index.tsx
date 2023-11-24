@@ -27,6 +27,11 @@ import { API_URL } from 'src/configs/constans'
 import { AuthResponse, AuthResponseError, IResponseError } from 'src/configs/types'
 import { AlertColor } from '@mui/material'
 
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 interface IMessage  {
   show: boolean;
   text: string;
@@ -235,17 +240,13 @@ const Home = () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      if (response.ok) {
-        const json = (await response.json()) as any;
-        console.log(json);
-        if(json.sucess){
-          alert('ok')
-        } else {
-          setErrorResponse("No se encontraron convocatorias")
-        }
+      const json = (await response.json()) as any;
+      console.log(json)
+      if (json.success) {
+        setOportunidades(json.resultados)
+        alert('ok')
         setLoading(false);
       } else {
-        const json = (await response.json()) as any;
         setLoading(false);
         setErrorResponse("No se encontraron convocatorias")
       }
@@ -492,7 +493,7 @@ const Home = () => {
               </Grid> 
             </Grid>
             }
-            
+     
           </CardContent>
         </Card>
 
@@ -534,7 +535,36 @@ const Home = () => {
                   </Grid> 
                 </Grid>
               }
+
+
+            {oportunidades.length > 0 &&
+              <div style={{ marginTop: 20 }}>
+                {oportunidades.map((o:any, index: number) => (
+                  <>
+                    <Accordion key={o.index}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls={`panel${index+1}a-content`}
+                        id= {`panel${index+1}a-header`}
+                      > 
+                        <Typography>{o.id}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <div style={{ widows: '100%', display: 'flex', flexDirection: 'column' }}>
+                          <Typography>BDNS {o['codigo-BDNS']}</Typography>
+                          <Typography>Descripción: {o.descripcionBR}</Typography>
+                          <Typography>Registrada {o['fecha-registro']}</Typography>
+                          <Typography>Modificado {o['fecha-mod']}</Typography>
+                        </div>
+                      </AccordionDetails>
+                    </Accordion>
+                  </>
+                ))}
+              </div>
+            }
+
               
+    
             </CardContent>
         </Card>
 
