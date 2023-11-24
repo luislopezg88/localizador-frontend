@@ -244,7 +244,6 @@ const Home = () => {
       console.log(json)
       if (json.success) {
         setOportunidades(json.resultados)
-        alert('ok')
         setLoading(false);
       } else {
         setLoading(false);
