@@ -50,7 +50,10 @@ const Home = () => {
     empleados: '',
     instrumento: '',
     tags: [],
-    id_user: ''
+    id_user: '',
+    administracion: '',
+    organo: ''
+    
   })
   const [tag, setTag] = useState<string>('')
   const [oportunidades, setOportunidades] = useState([])
@@ -210,6 +213,7 @@ const Home = () => {
         console.log(json);
         if(json && json.length > 0){
           const dataResponse = json[0];
+          console.log('dataResponse', dataResponse)
           setempresa({
             id: dataResponse._id,
             nombre: dataResponse.nombre,
