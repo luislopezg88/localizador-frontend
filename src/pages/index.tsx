@@ -53,7 +53,7 @@ const Home = () => {
     id_user: '',
     administracion: '',
     organo: ''
-    
+
   })
   const [tag, setTag] = useState<string>('')
   const [oportunidades, setOportunidades] = useState([])
@@ -129,7 +129,7 @@ const Home = () => {
         text: 'debe llenar todos los campo',
         type: 'error'
       })
-      return 
+      return
     } else {
       try {
         if(empresa.id != '' && empresa.id != null) { //update empresa
@@ -235,7 +235,7 @@ const Home = () => {
     } catch (error) {
       console.log(error);
     }
-  }  
+  }
 
   const searchOpornunities = async () =>{
     setLoading(true);
@@ -360,7 +360,7 @@ const Home = () => {
                   </Select>
                 </FormControl>
               </Grid>
-           
+
 
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
@@ -431,7 +431,7 @@ const Home = () => {
                           value={tag}
                           onChange={(e) => setTag(e.target.value)}
                         />
-                      </Grid> 
+                      </Grid>
                       <Grid item xs={12} md={4}>
                         <Box
                           sx={{
@@ -445,7 +445,7 @@ const Home = () => {
                             Añadir Tag
                           </Button>
                         </Box>
-                      </Grid>                
+                      </Grid>
                       <Grid item xs={12} md={12}>
                         <Box
                           sx={{
@@ -460,11 +460,11 @@ const Home = () => {
                         </Box>
                       </Grid>
                     </Grid>
-                  </Box>                                
+                  </Box>
                 </Box>
-              </Grid> 
-            </Grid> 
-            
+              </Grid>
+            </Grid>
+
             <Grid container spacing={6}>
               <Grid item xs={12} sm={12}>
                 <Box
@@ -475,15 +475,15 @@ const Home = () => {
                   <Button size='large' type='button' variant='contained' onClick={() => handleSubmit()} >
                     Guardar
                   </Button>
-                </Box> 
+                </Box>
               </Grid>
             </Grid>
-            
+
             {message.show &&
             <Grid container spacing={6}>
               <Grid item xs={12} sm={12} sx={{ mt: 6 }} >
                 <Alert
-                  variant="filled" severity={message.type} 
+                  variant="filled" severity={message.type}
                   onClose={() => {
                     setMessage({
                       ...message,
@@ -493,10 +493,10 @@ const Home = () => {
                 >
                   { message.text }
                 </Alert>
-              </Grid> 
+              </Grid>
             </Grid>
             }
-     
+
           </CardContent>
         </Card>
 
@@ -505,7 +505,7 @@ const Home = () => {
             mt: 10
           }}
         >
-          <CardHeader title='Oportunudades de negocio' titleTypographyProps={{ variant: 'h1' }} />
+          <CardHeader title='Oportunidades de negocio' titleTypographyProps={{ variant: 'h1' }} />
             <CardContent>
 
               <Grid container spacing={6}>
@@ -517,10 +517,10 @@ const Home = () => {
                     }}
                   >
                     <Button size='large' type='button' variant='contained' onClick={() => searchOpornunities()} >
-                      Buscar Oportunides
+                      Buscar Oportunidades
                     </Button>
 
-                  </Box> 
+                  </Box>
                 </Grid>
               </Grid>
 
@@ -528,14 +528,14 @@ const Home = () => {
                 <Grid container spacing={6}>
                   <Grid item xs={12} sm={12} sx={{ mt: 6 }} >
                     <Alert
-                      variant="filled" severity={'error'} 
+                      variant="filled" severity={'error'}
                       onClose={() => {
                         setErrorResponse('')
                       }}
                     >
                       { errorResponse }
                     </Alert>
-                  </Grid> 
+                  </Grid>
                 </Grid>
               }
 
@@ -549,7 +549,7 @@ const Home = () => {
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={`panel${index+1}a-content`}
                         id= {`panel${index+1}a-header`}
-                      > 
+                      >
                         <Typography>{o.id}</Typography>
                       </AccordionSummary>
                       <AccordionDetails>
@@ -566,8 +566,8 @@ const Home = () => {
               </div>
             }
 
-              
-    
+
+
             </CardContent>
         </Card>
 

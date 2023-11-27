@@ -84,14 +84,14 @@ const LoginPage = () => {
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
-  
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     // auth.setIsAuthenticated(true);
     console.log(API_URL);
     if(values.email == '' || values.password == ''){
       alert('debe llenar todos los campos')
-      return 
+      return
     } else {
       try {
         const response = await fetch(`${API_URL}/login`, {
@@ -102,7 +102,7 @@ const LoginPage = () => {
         if (response.ok) {
           const json = (await response.json()) as AuthResponse;
           console.log(json);
-  
+
           if (json.body.accessToken && json.body.refreshToken) {
             auth.saveUser(json);
           }
@@ -115,7 +115,7 @@ const LoginPage = () => {
       }
     }
   }
-  
+
   if (auth.isAuthenticated) {
     setTimeout(()=>{
       return router.push('/')
@@ -201,7 +201,7 @@ const LoginPage = () => {
           </Box>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-              Bienvenido to {themeConfig.templateName}! 👋🏻
+              Bienvenido
             </Typography>
             <Typography variant='body2'>Acceda a su cuenta y comience la aventura</Typography>
           </Box>
